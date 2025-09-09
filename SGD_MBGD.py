@@ -10,7 +10,7 @@ trajectory_BGD = [current_point.copy()]
 trajectory_MBGD = [current_point.copy()]
 learning_rate = 0.1
 epochs = 30
-
+test =1
 #SGD算法的实现
 for epoch in range(epochs):
     selected_point = data_points[np.random.randint(0, len(data_points))]
