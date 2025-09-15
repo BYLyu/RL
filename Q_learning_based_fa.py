@@ -1,13 +1,16 @@
+"""
+基于函数估计的Q_learning算法
+author: 子非鱼
+"""
+
+
 import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib.colors as mcolors
 from tqdm import tqdm
 
 class GridWorld:
-    """
-    环境类
-    # <--- 优化点: 更新了终点位置和奖励函数
-    """
+
     def __init__(self):
         self.valid_states = {
             (0,0), (0,1), (0,2), (0,3), (0,4),

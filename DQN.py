@@ -106,7 +106,6 @@ env_name = 'CartPole-v1'
 env = gym.make(env_name)
 random.seed(0)
 np.random.seed(0)
-# env.seed(0)  <-- 直接刪除此行
 torch.manual_seed(0)
 replay_buffer = ReplayBuffer(buffer_size)
 state_dim = env.observation_space.shape[0]
@@ -123,15 +122,12 @@ for i in range(10):
             done = False
             while not done:
                 action = agent.take_action(state)
-    # 1. 修改此行以接收 5 個回傳值
                 next_state, reward, terminated, truncated, info = env.step(action)
-    # 2. 重新組合出 done 變數
                 done = terminated or truncated 
     
-                replay_buffer.add(state, action, reward, next_state, done) # 傳入新的 done
+                replay_buffer.add(state, action, reward, next_state, done) 
                 state = next_state
                 episode_return += reward
-                # 当buffer数据的数量超过一定值后,才进行Q网络训练
                 if replay_buffer.size() > minimal_size:
                     b_s, b_a, b_r, b_ns, b_d = replay_buffer.sample(batch_size)
                     transition_dict = {
