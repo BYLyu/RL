@@ -1,9 +1,12 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+
+
 data_points = np.random.uniform(-10, 10, size=(100, 2))
 true_centroid = np.mean(data_points, axis=0)
-current_point = np.array([-20.0, 20.0]) # 起始点
+current_point = np.array([-20.0, 20.0]) 
+
 
 trajectory_SGD = [current_point.copy()]
 trajectory_BGD = [current_point.copy()]
