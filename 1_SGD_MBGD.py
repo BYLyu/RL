@@ -5,17 +5,18 @@ import matplotlib.pyplot as plt
 # 生成随机数据点
 data_points = np.random.uniform(-10, 10, size=(100, 2))
 true_centroid = np.mean(data_points, axis=0)
-start_point = np.array([-20.0, 20.0]) # 起始点
+start_point = np.array([-20.0, 20.0])    # 起始点
 
 class Sgd:
-    """ 随机梯度下降算法(sthotastic gradient desent,SGD)的实现 """
+    """ 随机梯度下降算法(sthotastic gradient descent,SGD)的实现 """
     def __init__(self, learning_rate = 0.1, epochs = 30,):
-        self.learning_rate = learning_rate
-        self.epochs = epochs  
+        # 算法超参数
+        self.learning_rate = learning_rate  #学习率
+        self.epochs = epochs    #训练轮次
 
     def fit(self, data_points: np.ndarray, initial_point: np.ndarray) -> np.ndarray:
-        current_point = initial_point.copy()
-        tr = [current_point.copy()]
+        current_point = initial_point.copy()    #初始化：起点即为当前点
+        tr = [current_point.copy()]     #记录优化路径
         for _ in range(self.epochs):
             selected_point = data_points[np.random.randint(0, len(data_points))]
             gradient = 2 * (current_point - selected_point)

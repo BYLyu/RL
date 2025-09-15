@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+"""
+使用 Sarsa 算法解决一个带障碍物的网格世界 (GridWorld) 寻路问题。
+"""
+
 import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib.colors as mcolors
@@ -34,6 +39,7 @@ class GridWorld:
         self.REWARD_STEP = -1
 
         # 定义动作空间 (0:上, 1:下, 2:左, 3:右)
+        # 这是修复原代码的关键错误，Sarsa类需要这些属性
         self.actions = [0, 1, 2, 3]
         self.action_deltas = {
             0: (-1, 0),  # 上
@@ -178,8 +184,8 @@ def visualize_policy(env, agent):
         ax.plot(cols, rows, color='red', linewidth=3, alpha=0.7)
 
     # 3. 标记起点和终点
-    start_circle = plt.Circle((env.start_state[1], env.start_state[0]), 0.1, color='orange')
-    goal_circle = plt.Circle((env.goal_state[1], env.goal_state[0]), 0.1, color='blue')
+    start_circle = plt.Circle((env.start_state[1], env.start_state[0]), 0.2, color='orange')
+    goal_circle = plt.Circle((env.goal_state[1], env.goal_state[0]), 0.2, color='blue')
     ax.add_patch(start_circle)
     ax.add_patch(goal_circle)
     
@@ -193,6 +199,7 @@ def visualize_policy(env, agent):
 
 
 def main():
+    """主函数，负责执行整个Sarsa算法的训练和评估流程。"""
     # --- 1. 定义超参数 ---
     NUM_EPISODES = 500
     ALPHA = 0.1
@@ -204,62 +211,64 @@ def main():
     np.random.seed(RANDOM_SEED)
     env = GridWorld()
     agent = Sarsa(env, epsilon=EPSILON, alpha=ALPHA, gamma=GAMMA)
-    # --- 3. 训练智能体 ---
+
+    # --- 3. 训练循环（已简化） ---
     return_list = []
     length_list = []
     
-     # 将总训练过程分为10个迭代块
-    for i in range(10):
-        with tqdm(total=int(NUM_EPISODES / 10), desc=f'Iteration {i+1}/10') as pbar:
-            for i_episode in range(int(NUM_EPISODES / 10)):
-                state = env.start_state
-                action = agent.take_action(state)
-                episode_return = 0
-                episode_length = 0
-                done = False
+    # 使用单个循环和tqdm来清晰地展示进度
+    with tqdm(total=NUM_EPISODES, desc='Training Progress') as pbar:
+        for i_episode in range(NUM_EPISODES):
+            state = env.start_state
+            action = agent.take_action(state)
+            episode_return = 0
+            episode_length = 0
+            done = False
+            
+            while not done:
+                next_state, reward, done = env.step(state, action)
+                next_action = agent.take_action(next_state)
                 
-                while not done:
-                    next_state, reward, done = env.step(state, action)
-                    next_action = agent.take_action(next_state)
-                    
-                    agent.update(state, action, reward, next_state, next_action)
-                    
-                    state = next_state
-                    action = next_action
-                    episode_return += reward
-                    episode_length += 1
+                agent.update(state, action, reward, next_state, next_action)
                 
-                return_list.append(episode_return)
-                length_list.append(episode_length)
-                
-                if (i_episode + 1) % 10 == 0:
-                    pbar.set_postfix({
-                        'episode': f'{int(NUM_EPISODES / 10 * i + i_episode + 1)}',
-                        'return': f'{np.mean(return_list[-10:]):.3f}'
-                    })
-                pbar.update(1)
+                state = next_state
+                action = next_action
+                episode_return += reward
+                episode_length += 1
+            
+            return_list.append(episode_return)
+            length_list.append(episode_length)
+            
+            # 更新进度条信息，显示最近10个回合的平均回报
+            pbar.set_postfix({
+                'episode': f'{i_episode + 1}/{NUM_EPISODES}',
+                'avg_return': f'{np.mean(return_list[-10:]):.3f}'
+            })
+            pbar.update(1)
 
     # --- 4. 可视化结果 ---
     visualize_policy(env, agent)
 
-    # --- 5. 回报曲线和回合长度曲线
-    fig, axs = plt.subplots(2, 1, figsize=(10, 8))
+    # 绘制回报曲线
+    plt.figure(figsize=(10, 4))
+    plt.plot(return_list)
+    plt.xlabel('Episodes')
+    plt.ylabel('Returns')
+    plt.title('Returns per Episode')
+    plt.grid(True)
+    plt.show()
 
-    axs[0].plot(return_list)
-    axs[0].set_xlabel('Episodes')
-    axs[0].set_ylabel('Returns')
-    axs[0].set_title('Returns per Episode')
-    axs[0].grid(True)
-
-    axs[1].plot(length_list)
-    axs[1].set_xlabel('Episodes')
-    axs[1].set_ylabel('Episode Length')
-    axs[1].set_title('Episode Length per Episode')
-    axs[1].grid(True)
-
-    plt.tight_layout()
+    # 绘制回合长度曲线
+    plt.figure(figsize=(10, 4))
+    plt.plot(length_list)
+    plt.xlabel('Episodes')
+    plt.ylabel('Episode Length')
+    plt.title('Episode Length per Episode')
+    plt.grid(True)
     plt.show()
 
 
+# 使用 if __name__ == '__main__': 是Python编程的最佳实践，
+# 它可以防止在其他脚本导入此文件时执行训练代码。
 if __name__ == '__main__':
     main()
