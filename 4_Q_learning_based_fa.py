@@ -215,20 +215,18 @@ def plot_learning_curves(return_list, length_list):
         return_list (list): 每个回合的总回报列表。
         length_list (list): 每个回合的步数列表。
     """
-    fig, axes = plt.subplots(2, 1, figsize=(10, 8), sharex=True)
+    fig, axes = plt.subplots(2, 1, figsize=(10, 6), sharex=True)
     # 绘制回报曲线
     axes[0].plot(return_list, label='Episode Return')
     axes[0].set_ylabel('Returns')
     axes[0].grid(True)
-    axes[0].legend()
     
     # 绘制回合长度曲线
     axes[1].plot(length_list, label='Episode Length', color='orange')
     axes[1].set_xlabel('Episodes')
     axes[1].set_ylabel('Episode Length')
     axes[1].grid(True)
-    axes[1].legend()
-    
+
     plt.show()
 
 

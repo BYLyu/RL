@@ -28,7 +28,7 @@ class GridWorld:
             (4,0),        (4,2), (4,3), (4,4)
         }
 
-        # 将奖励值定义为常量，增强可读性
+        # 奖励
         self.REWARD_GOAL = 0
         self.REWARD_BOUNDARY = -10
         self.REWARD_STEP = -1
